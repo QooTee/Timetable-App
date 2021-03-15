@@ -29,8 +29,8 @@ const Page = (props) => {
 
   const getFloatie = async (floatieKey) => {
     try{
-    const res = await getData(props.i + floatieKey);
-    return res;
+      const res = await getData(props.i + floatieKey);
+      return res;
     }catch(e){
       console.log(e);
     }
@@ -52,7 +52,7 @@ const Page = (props) => {
 
   return (
     <View style = {[styles.workingArea, {flex: 17, backgroundColor: '#7bb3ff',}]}>
-      <Text style = {{fontWeight: 'bold', fontSize: 17}}>{props.i}</Text>
+      <Text style = {{fontWeight: 'bold', fontSize: 17}}>D{props.i} F{props.num}</Text>
         {floaties.map((floatie, index) => <Floatie key ={props.i + index.toString()} i = {props.i + index.toString()} {...floatie} />)}
     </View>
   )
@@ -61,23 +61,8 @@ const Page = (props) => {
 const Notes = ({navigation}) => {
 
   const [day, setDay] = useState(0);
+   
   const [num, setNum] = useState(0);
-
-  const getNum = async (dayString) => {
-    try{
-    const data = await getData(dayString);
-    return data;
-    }catch(e){
-      console.log(e);
-    }
-  }
-
-  React.useEffect(() => {
-    getData(day.toString, (data) => {
-      setNum(data === null ? 0 : data);
-    })
-
-  }, [123]);
 
   const Floatie = () => (
     {
@@ -89,28 +74,32 @@ const Notes = ({navigation}) => {
   )
 
   React.useEffect(() => {
+    const fetchData = async () => {
+      const data = await getData(day.toString());
+      const res = data ? data : 0;
+      setNum(res);
+    };
+
+    fetchData();
+  }, [day])
+
+  React.useEffect(() => {
     navigation.setOptions({
       headerRight: () => {
         return ( 
           <Pressable
-            onPress = {async () => {
-              try{
-                await storeData(day.toString() + num.toString(), Floatie())
-                setNum(num + 1);
-              }catch(e){
-                console.log(e);
-              }
-            }}>
+            onPress = {() => {
+              setNum(num + 1);
+              storeData(day.toString(), num + 1)
+              storeData(day.toString() + num.toString(), Floatie())
+            }}
+          >
               <Image source = {require('../img/addbutton.png')}/>
           </Pressable>
         )
       },
     });
   }, [navigation, day, num]);
-
-  React.useEffect(() => {
-    storeData(day.toString(), num);
-  }, [num])
 
   return (
     <View style = {[styles.hContainer, {flexDirection: 'column-reverse', backgroundColor: '#7bb3ff' }]}>
@@ -131,7 +120,7 @@ const Notes = ({navigation}) => {
             <Image source = {require('../img/rightbutton.png')}/>
         </Pressable>
       </View>
-      <Page key = {day.toString()} i = {day.toString()}></Page>
+      <Page key = {day.toString()} i = {day.toString()} num = {num}></Page>
     </View>
   )
 }

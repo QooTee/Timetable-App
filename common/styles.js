@@ -41,6 +41,12 @@ export default StyleSheet.create({
     height: 60,
     alignItems:'center',
     justifyContent: 'center'
+  },
+  ratioMore: {
+    width: '100%',
+  },
+  ratioLess: {
+    height: '100%'
   }
 })
 

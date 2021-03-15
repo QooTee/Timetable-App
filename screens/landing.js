@@ -5,7 +5,6 @@ import PressableText from '../common/pressableText';
 import styles from '../common/styles'
 
 const LandingPage = ({navigation}) => {
-  AsyncStorage.clear();
   return( 
     <View style = {styles.container}>
       <PressableText 

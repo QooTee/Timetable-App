@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Text, View, Animated,  PanResponder, Pressable,} from 'react-native';
+import { Text, View, Animated,  PanResponder, Pressable, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles'
 import MultilineText from './multilineText';
@@ -14,11 +14,14 @@ const storeData = async (key, value) => {
 }
 
 const Floatie = (props) => {
+
   const [dims, setDims] = useState(props.dims);
   const [cords, setCords] = useState(props.cords);
   const [changeFlag, setChangeFlag] = useState(false);
+  
   const [text, setText] = useState(props.contents.text);
   const [title, setTitle] = useState(props.contents.title);
+  
   const [focused, focus] = useState(false);
   const [minimized, minimize] = useState(props.minimized);
 
@@ -95,15 +98,16 @@ const Floatie = (props) => {
   }
 
   if(focused){
+    const ratio = dims.width/dims.height;
     return (
       <View
         style={{
-          position: 'absolute', height: '100%', width: '100%', zIndex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0, 0.8)', padding: '10%'}}
+          position: 'absolute', height: '100%', width: '100%', zIndex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0, 0.8)', padding: '10%'}}
         {...panResponder.panHandlers}
       >
         <Pressable 
           onLongPress = {() => focus(false)}>
-        <View style={[styles.floatie, {width: '100%',  height: '100%', }]}>
+        <View style={[styles.floatie, ratio >= 1 ? {width: '80%',} : {height: '80%'}, {aspectRatio: ratio}]}>
             <MultilineText 
               value = {text}
               onChangeText = {inp => {
@@ -112,13 +116,13 @@ const Floatie = (props) => {
                 setText(inp);
               }}
             />
-            <View style = {{flexDirection: 'row-reverse', width: '100%'}}>
-              <Pressable>
-                  <View style = {[styles.floatie, {backgroundColor:'red', width: 50, height: 50}]}/>
-              </Pressable>
-            </View>
-        </View>
+          </View>
         </Pressable>
+        <View style = {{backgroundColor: 'blue', width: '100%',}}>
+          <Pressable>
+            <View style = {[styles.floatie, {backgroundColor:'red', width: 50, height: 50}]}/>
+          </Pressable>
+        </View>
       </View>
     )
   }
